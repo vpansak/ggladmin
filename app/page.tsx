@@ -7,6 +7,7 @@ type DashboardData = {
   counts: Record<string, number>;
   recent: Record<string, Record<string, unknown>[]>;
   updatedAt: string;
+  diagnostics?: Record<string, string>;
 };
 
 const sections = [
@@ -125,6 +126,7 @@ export default function Home() {
       <div className="mx-auto max-w-7xl px-5 py-8">
         <div className="mb-7 flex flex-wrap items-end justify-between gap-3"><div><h2 className="text-2xl font-bold">Control Room</h2><p className="mt-1 text-sm text-slate-400">Applications from the existing GGL database · Auto-refresh every 15 seconds</p></div><p className="text-xs text-slate-500">Last sync: {data?.updatedAt ? new Date(data.updatedAt).toLocaleTimeString("en-IN") : "Connecting..."}</p></div>
         {error && <div className="mb-5 rounded-xl border border-red-400/20 bg-red-950/30 p-4 text-sm text-red-200">{error}</div>}
+        {data?.diagnostics && Object.keys(data.diagnostics).length > 0 && <div className="mb-5 rounded-xl border border-amber-400/30 bg-amber-950/20 p-4 text-sm text-amber-100"><p className="mb-2 font-bold">Database diagnostics</p><ul className="list-disc space-y-1 pl-5">{Object.entries(data.diagnostics).map(([key, message]) => <li key={key}><span className="font-semibold">{key}:</span> {message}</li>)}</ul></div>}
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {sections.map(({key,label,icon:Icon})=><button key={key} onClick={()=>setActive(key)} className={`rounded-2xl border p-5 text-left transition ${active===key?"border-amber-300/50 bg-amber-300/10":"border-white/10 bg-white/[0.03] hover:bg-white/[0.06]"}`}><div className="flex items-center justify-between"><span className="text-sm text-slate-400">{label}</span><Icon size={19} className="text-amber-300"/></div><p className="mt-4 text-3xl font-black tabular-nums">{data?.counts[key] ?? "—"}</p><p className="mt-1 text-xs text-slate-500">Total records</p></button>)}
         </section>
