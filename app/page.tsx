@@ -56,6 +56,23 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
+    fetch("/api/dashboard", { cache: "no-store" })
+      .then(async (res) => {
+        if (!res.ok) return null;
+        return res.json();
+      })
+      .then((json) => {
+        if (!cancelled && json?.success) {
+          setData(json);
+          setLoggedIn(true);
+        }
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
     if (!loggedIn) return;
     void loadData();
     const timer = window.setInterval(() => void loadData(true), 15000);
