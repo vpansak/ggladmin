@@ -23,3 +23,7 @@ npm run build
 ```
 
 After deployment, verify login with an existing administrator account, compare all category counts with the main portal, open a record and test a read-only export. Never create real payments, send messages, delete records or reset credentials as a test.
+
+## Ticket verification subdomain
+
+`verify.gkpgotlatent.in` serves the existing ticket checker at `/` in the same Vercel project. Host routing in `proxy.ts` selects its own staff login without the full admin UI. Other admin pages redirect to the verification root and non-ticket API paths are unavailable on that host. Ticket authentication, lookup, duplicate-use prevention and check-in remain enforced by the original backend. Only verified, authorized staff can change a ticket. Host-only session cookies remain separate from the admin hostname.

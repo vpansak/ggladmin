@@ -373,7 +373,7 @@ export default function VerifyTicketPage() {
             </p>
           </div>
 
-          <Link href="/malik" className="block text-center font-bold text-amber-300">Sign in through Admin Portal</Link>
+          <Link href="https://admin.gkpgotlatent.in/" className="block text-center font-bold text-amber-300">Open Admin Portal</Link>
           <form onSubmit={handleLogin} className="p-6 rounded-3xl border border-amber-500/30 space-y-4 bg-slate-900/90 shadow-2xl">
             {loginError && (
               <div className="p-3 rounded-xl bg-red-950/80 border border-red-500/50 text-red-300 text-xs font-bold text-center flex items-center justify-center gap-2">
