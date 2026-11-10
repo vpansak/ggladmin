@@ -6,6 +6,10 @@ test('only the copied admin workflows can reach the upstream service', () => {
   assert.equal(allowedRoute('malik/applications', 'GET'), true);
   assert.equal(allowedRoute('malik/auth/verify-otp', 'POST'), true);
   assert.equal(allowedRoute('malik/documents/a.pdf', 'GET'), true);
+  assert.equal(allowedRoute('tickets/image', 'POST'), true);
+  assert.equal(allowedRoute('tickets/pdf', 'POST'), true);
+  assert.equal(allowedRoute('tickets/lookup', 'POST'), true);
+  assert.equal(allowedRoute('tickets/pdf', 'GET'), false);
   for (const path of ['../malik/applications', 'malik/../login', '//other.example', 'malik/documents/../private', 'register', 'admin-gateway']) assert.equal(allowedRoute(path, 'GET'), false);
   assert.equal(allowedRoute('malik/applications', 'POST'), false);
   assert.equal(allowedRoute('ggl-talent-trip', 'POST'), false);
