@@ -1,12 +1,41 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { Bebas_Neue, Barlow_Condensed, Anton, Outfit, Inter } from 'next/font/google';
+import AdminSession from '@/components/AdminSession';
+import './globals.css';
+const bebas = Bebas_Neue({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-bebas',
+  display: 'swap',
+});
 
-export const metadata: Metadata = {
-  title: "GGLADMIN | Gorakhpur's Got Latent",
-  description: "Secure administration dashboard for Gorakhpur's Got Latent.",
-  robots: { index: false, follow: false },
-};
+const anton = Anton({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-anton',
+  display: 'swap',
+});
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body>{children}</body></html>;
+const barlow = Barlow_Condensed({
+  weight: ['400', '500', '600', '700', '800'],
+  subsets: ['latin'],
+  variable: '--font-barlow',
+  display: 'swap',
+});
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  variable: '--font-outfit',
+  display: 'swap',
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+export const metadata: Metadata = { title: 'GGLADMIN | Admin Portal', description: 'Private GGL administration portal', robots: { index: false, follow: false } };
+export default function RootLayout({children}: {children: React.ReactNode}) {
+return <html lang="en" className={`${bebas.variable} ${barlow.variable} ${anton.variable} ${outfit.variable} ${inter.variable} scroll-smooth`}><body className="ggl-site bg-[#07080e] text-slate-100 antialiased selection:bg-amber-500 selection:text-black min-h-screen"><AdminSession>{children}</AdminSession></body></html>;
 }
