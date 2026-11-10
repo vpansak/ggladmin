@@ -32,6 +32,7 @@ export default function VerifyTicketPage() {
   const [loginId, setLoginId] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+  useEffect(() => { try { setLoginId(localStorage.getItem('ggl_gate_staff_id') || ''); } catch {} }, []);
 
   // Verification State
   const [ticketIdInput, setTicketIdInput] = useState('');
@@ -77,7 +78,7 @@ export default function VerifyTicketPage() {
     e.preventDefault();
     setLoginError('');
 
-    const cleanId = 'PASSCODE';
+    const cleanId = loginId.trim().toLowerCase();
     const cleanPw = loginPassword.trim();
 
     try {
@@ -93,6 +94,8 @@ export default function VerifyTicketPage() {
         return;
       }
 
+      try { localStorage.setItem('ggl_gate_staff_id', cleanId); } catch {}
+      setLoginPassword('');
       setIsAuthenticated(true);
       setLoginId('');
       setLoginPassword('');
@@ -394,7 +397,7 @@ export default function VerifyTicketPage() {
               </div>
             )}
 
-            <label className="block text-xs text-slate-300">Staff ID<input value={loginId} onChange={e => setLoginId(e.target.value)} placeholder="Configured gate staff ID" required className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-3 text-white" /></label>
+            <label className="block text-xs text-slate-300">Staff ID<input type="email" autoComplete="username" value={loginId} onChange={e => setLoginId(e.target.value)} placeholder="Staff email address" required className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-3 text-white" /></label>
             <div className="space-y-1">
               <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                 <Lock className="w-3.5 h-3.5 text-amber-400" /> Password
