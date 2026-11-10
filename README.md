@@ -1,15 +1,25 @@
 # GGLADMIN
 
-Separate, private administration dashboard for Gorakhpur's Got Latent. The dashboard reads application records from the existing GGL Neon PostgreSQL database and refreshes every 15 seconds.
+Standalone copy of the GGL admin portal, based on `vpansak/gorakhpursgotlatent` at `f47ddc3`.
 
-## Required Vercel environment variables
+The root opens the admin portal. Public website navigation and the home link are omitted. The original email OTP and mobile/password forms authenticate through the existing GGL backend. Existing accounts, password hashes, OTP authorization, payment verification and role checks remain authoritative there. No passwords, application records, documents or database credentials are committed to this repository.
 
-- `DATABASE_URL`: same Neon PostgreSQL connection string used by the main GGL website.
-- `GGLADMIN_PASSWORD`: a new, strong password only for this dashboard.
-- `GGLADMIN_SESSION_SECRET`: a random secret of at least 32 characters, used to sign 8-hour HTTP-only sessions.
+## Live data
 
-Never commit secrets into this repository. Add environment variables in Vercel Project Settings, then redeploy.
+`app/api/[...path]/route.ts` forwards only the explicit admin workflow allowlist to `https://www.gkpgotlatent.in`. Only the GGL session cookies are forwarded; they stay host-only and HTTP-only. API responses are private and never cached. Cross-origin mutations are rejected. The original backend checks authentication and roles for each protected operation.
 
-## Deploy
+Both portals operate on the same existing Neon database through that backend. There is no replication lag or separate database copy to reconcile. The visible dashboard checks for committed updates every second while online and visible, without overlapping refreshes. Network and server time can make display updates take longer. It pauses while hidden or offline and refreshes on return. Login is required separately on each hostname.
 
-Import `vpansak/ggladmin` as a new Vercel project, add the environment variables above, and deploy. The repository is deliberately separate from the production GGL website.
+Includes applications, notes/status/payment controls, Excel and ZIP exports, Computer Ji scores, leads, tickets and scanning, invitations, Talent Trip and the operator room. Participant payment and form links continue to point at the original public website. Existing deletion, refunds and messaging controls still require the user's action; do not use them for verification.
+
+## Deploy and verify
+
+Deploy the `ggladmin` Vercel project from this repository. No new database or shared signing credentials are needed for the portal gateway. The old standalone password login is retired in favor of the existing GGL accounts. `admin.gkpgotlatent.in` must point at this project using its recommended CNAME in Vercel; DNS is managed separately.
+
+```sh
+npm ci
+npm test
+npm run build
+```
+
+After deployment, verify login with an existing administrator account, compare all category counts with the main portal, open a record and test a read-only export. Never create real payments, send messages, delete records or reset credentials as a test.
