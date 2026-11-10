@@ -8,6 +8,7 @@ import {
   RefreshCw, AlertCircle, CheckCircle2, Clock, ArrowLeft, Lock, Phone
 } from 'lucide-react';
 import { parseResponse } from '@/lib/client-fetch';
+import { otpChallenge } from '@/lib/otpChallenge.mjs';
 
 interface AdminOtpLoginProps {
   onSuccess?: () => void;
@@ -102,16 +103,18 @@ export default function AdminOtpLogin({ onSuccess }: AdminOtpLoginProps) {
 
       const data = await parseResponse(res);
 
-      if (!data.success) {
+      const challenge = otpChallenge(data);
+      if (!challenge) {
         throw new Error(data.error || 'Unable to send verification code. Please check your administrator access.');
       }
+      try { localStorage.setItem('ggl_admin_email', cleanEmail); } catch {}
 
       setStep('VERIFY_OTP');
       setOtpDigits(['', '', '', '', '', '']);
-      setExpirySeconds(data.expiresInSeconds || 300);
-      setCooldownSeconds(data.cooldownSeconds || 60);
+      setExpirySeconds(challenge.expires);
+      setCooldownSeconds(challenge.cooldown);
       setIsExpired(false);
-      setSuccessMsg(`Verification code sent to: ${cleanEmail}`);
+      setSuccessMsg(challenge.pending ? 'A code was recently requested for this email. Enter the latest code, or wait to resend.' : `Verification code sent to: ${cleanEmail}`);
     } catch (err: any) {
       setError(err.message || 'Unable to send verification code.');
     } finally {
