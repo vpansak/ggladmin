@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import AdminOtpLogin from '@/components/AdminOtpLogin';
 import Link from 'next/link';
 import jsQR from 'jsqr';
 import { 
@@ -27,6 +28,7 @@ import { TicketRecord } from '@/lib/ticketTypes';
 export default function VerifyTicketPage() {
   // Auth State
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [useAdminLogin, setUseAdminLogin] = useState(false);
   const [loginId, setLoginId] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
@@ -356,6 +358,16 @@ export default function VerifyTicketPage() {
   // -------------------------------------------------------------
   // LOGIN SCREEN (FULLSCREEN ZERO SCROLL)
   // -------------------------------------------------------------
+  if (!isAuthenticated && useAdminLogin) {
+    return <main><AdminOtpLogin onSuccess={async () => {
+      try {
+        const response = await fetch('/api/tickets/staff-session', { cache: 'no-store' });
+        const result = await response.json();
+        setIsAuthenticated(Boolean(result.authenticated));
+        if (!result.authenticated) { setUseAdminLogin(false); setLoginError('This account does not have ticket verification access.'); }
+      } catch { setUseAdminLogin(false); setLoginError('Unable to verify access. Please retry.'); }
+    }} /><div className="pb-8 text-center"><button className="text-sm font-bold text-amber-300" onClick={() => setUseAdminLogin(false)}>Use gate staff password</button></div></main>;
+  }
   if (!isAuthenticated) {
     return (
       <div className="fixed inset-0 z-[9999] bg-[#07080e] text-slate-100 flex flex-col items-center justify-center p-4 overflow-hidden select-none">
@@ -373,7 +385,7 @@ export default function VerifyTicketPage() {
             </p>
           </div>
 
-          <Link href="https://admin.gkpgotlatent.in/" className="block text-center font-bold text-amber-300">Open Admin Portal</Link>
+          <button type="button" onClick={() => setUseAdminLogin(true)} className="block w-full text-center font-bold text-amber-300">Sign in with admin email / OTP</button>
           <form onSubmit={handleLogin} className="p-6 rounded-3xl border border-amber-500/30 space-y-4 bg-slate-900/90 shadow-2xl">
             {loginError && (
               <div className="p-3 rounded-xl bg-red-950/80 border border-red-500/50 text-red-300 text-xs font-bold text-center flex items-center justify-center gap-2">

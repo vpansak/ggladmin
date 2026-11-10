@@ -10,6 +10,9 @@ test('verification root exposes ticket workflows and hides admin routes', () => 
   assert.equal(verifyRouteAction('/'), 'rewrite');
   assert.equal(verifyRouteAction('/api/tickets/lookup'), 'allow');
   assert.equal(verifyRouteAction('/api/malik/applications'), 'deny');
+  assert.equal(verifyRouteAction('/api/malik/auth/send-otp'), 'allow');
+  assert.equal(verifyRouteAction('/api/malik/auth/verify-otp'), 'allow');
+  assert.equal(verifyRouteAction('/api/malik/login'), 'allow');
   assert.equal(verifyRouteAction('/malik/orders'), 'redirect');
   assert.equal(verifyRouteAction('/logo.png'), 'allow');
 });
